@@ -24,7 +24,6 @@ def get_change_list(start='z'):
         'Content-Type': 'application/json; charset=UTF-8',
     }
     r = requests.post(url, data=json.dumps(payload), headers=headers).json()
-    print(r)
     change_list = r['result']['changes']
 
     last_change = 'z'
