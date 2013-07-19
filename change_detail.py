@@ -25,10 +25,15 @@ def get_change_detail(id, i=0):
     r = requests.post(url, data=json.dumps(payload), headers=headers).json()
     return r['result']
 
-changes = change_db.find({'$or': [
-    {'change': {'$exists': False}},
-    {'change.open': True}}]})
-for change in changes:
+changes = change_db.find(
+    {'$or': [
+        {'change': {'$exists': False}},
+        {'change.open': True}]})
+
+print(changes.count())
+
+for n, change in enumerate(changes):
+    print("{0} of {1}".format(n, changes.count()))
     if 'change' not in change:
         detail = get_change_detail(change['_id']['id'])
         if detail != None:
