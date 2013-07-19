@@ -30,13 +30,10 @@ changes = change_db.find(
         {'change': {'$exists': False}},
         {'change.open': True}]})
 
-print(changes.count())
-
 for n, change in enumerate(changes):
     print("{0} of {1}".format(n, changes.count()))
-    if 'change' not in change:
-        detail = get_change_detail(change['_id']['id'])
-        if detail != None:
-            detail['_id'] = change['_id']
-            change_db.update({'_id': change['_id']}, detail)
+    detail = get_change_detail(change['_id']['id'])
+    if detail != None:
+        detail['_id'] = change['_id']
+        change_db.update({'_id': change['_id']}, detail)
     sleep(randint(5, 10))
