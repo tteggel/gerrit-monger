@@ -10,21 +10,14 @@ m = MongoClient()
 db = m.openstack_gerrit
 change_db = db.changes
 account_db = db.accounts
-crawl_state_db = db.crawl_state
 
-crawl_state = crawl_state_db.find_one({'_id': 'change_list'})
-if crawl_state is None:
-    crawl_state = {'_id': 'change_list',
-                   'last_sortKey': 'z'}
-    crawl_state_db.insert(crawl_state)
-
-def get_change_list(start='z', i=0):
+def get_change_list(start='z'):
     url = 'https://review.openstack.org/gerrit/rpc/ChangeListService'
     payload = {
         'jsonrpc': '2.0',
         'method': 'allQueryNext',
-        'params': ['project:openstack/nova', start, 50],
-        'id': i
+        'params': ['project:openstack/nova', start, 500],
+        'id': 0
     }
     headers = {
         'Accept': 'application/json',
@@ -33,7 +26,8 @@ def get_change_list(start='z', i=0):
     r = requests.post(url, data=json.dumps(payload), headers=headers).json()
     print(r)
     change_list = r['result']['changes']
-    account_list = r['result']['accounts']
+
+    last_change = 'z'
 
     for change in change_list:
         print(change['key']['id'])
@@ -42,11 +36,10 @@ def get_change_list(start='z', i=0):
             change_db.insert(change)
         except DuplicateKeyError:
             pass #ignore already added changes
-        crawl_state['last_sortKey'] = change['sortKey']
-        crawl_state_db.update({'_id': 'change_list'}, crawl_state)
+        last_change = change['sortKey']
 
-    if crawl_state['last_sortKey'] != None:
+    if last_change != 'z':
         sleep(randint(5, 10))
-        get_change_list(start=crawl_state['last_sortKey'], i=i+1)
+        get_change_list(start=last_change)
 
-get_change_list(start=crawl_state['last_sortKey'])
+get_change_list()
