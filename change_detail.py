@@ -23,10 +23,11 @@ def get_change_detail(id, i=0):
         'Content-Type': 'application/json; charset=UTF-8',
     }
     r = requests.post(url, data=json.dumps(payload), headers=headers).json()
-    print(r)
     return r['result']
 
-changes = change_db.find({'change':{'$exists':False}})
+changes = change_db.find({'$or': [
+    {'change': {'$exists': False}},
+    {'change.open': True}}]})
 for change in changes:
     if 'change' not in change:
         detail = get_change_detail(change['_id']['id'])
