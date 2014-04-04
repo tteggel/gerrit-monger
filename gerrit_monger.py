@@ -36,6 +36,10 @@ parser.add_argument('-s', '--status',
                              'merged'],
                     help='gerrit statuses to mong.',
                     type=str, nargs='*')
+parser.add_argument('-a', '--age', default=None,
+                    help=('only return changes that have changed in last '
+                          'N s, m, h, d, w, mon, y.'),
+                    type=str)
 args = parser.parse_args()
 
 ###############################################################################
@@ -58,9 +62,11 @@ def get_change_list(status):
             changes = gerrit.bulk_query(("--commit-message --comments "
                                      "--current-patch-set --patch-sets "
                                      "--all-approvals --files --dependencies "
-                                     "--submit-records limit:100 "
-                                     "status:{0} resume_sortkey:{1}").format(
-                                         status, sortKey))
+                                     "--submit-records limit:100 -- "
+                                     "status:{0} resume_sortkey:{1} "
+                                     "{2}").format(status, sortKey, 
+                                       "-age:{0}".format(args.age) 
+                                         if args.age else ""))
         except Exception, e:
             print(e)
 
