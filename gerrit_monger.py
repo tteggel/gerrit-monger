@@ -28,6 +28,9 @@ parser.add_argument('-k', '--gerritkey', default='/home/ubuntu/.ssh/id_rsa',
 parser.add_argument('-u', '--gerrituser', default='tteggel',
                     help='username for the gerrit server.',
                     type=str)
+parser.add_argument('-r', '--resumesortkey', default='z',
+                    help='start at the provided sort key.',
+                    type=str)
 args = parser.parse_args()
 
 ###############################################################################
@@ -40,7 +43,7 @@ gerrit = gerritlib.gerrit.Gerrit(args.gerrithost, args.gerrituser,
 
 def get_change_list(status):
 
-    sortKey = 'z'
+    sortKey = args.resumesortkey
     last_sortKey = False	
     while sortKey != last_sortKey:
         last_sortKey = sortKey
