@@ -31,6 +31,11 @@ parser.add_argument('-u', '--gerrituser', default='tteggel',
 parser.add_argument('-r', '--resumesortkey', default='z',
                     help='start at the provided sort key.',
                     type=str)
+parser.add_argument('-s', '--status', 
+                    default=['open', 'reviewed', 'submitted', 'abandoned', 
+                             'merged'],
+                    help='gerrit statuses to mong.',
+                    type=str, nargs='*')
 args = parser.parse_args()
 
 ###############################################################################
@@ -73,11 +78,5 @@ def get_change_list(status):
 
 ###############################################################################
 
-for status in [
-    #'open', 
-    #'reviewed', 
-    #'submitted', 
-    #'abandoned', 
-    'merged'
-    ]:
+for status in args.status:
     get_change_list(status)
