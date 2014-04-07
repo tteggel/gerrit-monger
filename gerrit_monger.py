@@ -33,7 +33,7 @@ parser.add_argument('-r', '--resumesortkey', default='z',
                     type=str)
 parser.add_argument('-s', '--status', 
                     default=['open', 'reviewed', 'submitted', 'abandoned', 
-                             'merged'],
+                             'merged', 'new'],
                     help='gerrit statuses to mong.',
                     type=str, nargs='*')
 parser.add_argument('-a', '--age', default=None,
