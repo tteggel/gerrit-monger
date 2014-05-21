@@ -88,10 +88,11 @@ def get_approved_projects():
     y = yaml.load(requests.get(programs_url).text)
 
     projects = []
-    for _, project in y.items():
-        for _, l in project['projects'].items():
-            for repo in l:
-                projects.append(repo)
+    for _, program in y.items():
+        for project in program['projects']:
+            for key, repo in project.items():
+                if key == 'repo':
+                    projects.append(repo)
 
     return projects
     
